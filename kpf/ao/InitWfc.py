@@ -3,13 +3,13 @@ import ktl
 from ddoitranslatormodule.KPFTranslatorFunction import KPFTranslatorFunction
 
 
-class AoHatchOpen(KPFTranslatorFunction):
+class InitWfc(KPFTranslatorFunction):
     """
-    AoHatchOpen -- open AO hatch
+    InitWfc -- Init WFC 
     SYNOPSIS
-        AoHatchOpen.execute()
+        InitWfc.execute()
     DESCRIPTION
-        open AO hatch for KPF observing
+        init WFS so ACAM can see light
 
     ARGUMENTS
     OPTIONS
@@ -24,13 +24,12 @@ class AoHatchOpen(KPFTranslatorFunction):
     @classmethod
     def perform(cls, args, logger, cfg):
         ao = ktl.cache('ao')
-        ao['aohatchcmd'].write('open')
+        ao['WCINIT'].write('1')
 
     @classmethod
     def post_condition(cls, args, logger, cfg):
         ao = ktl.cache('ao')
-        aohatchsts_success = ktl.waitfor('($ao.AOHATCHSTS == open)', timeout=30)
-        if not aohatchsts_success:
-            print(f'Failed to open AO hatch')
-        return aohatchsts_success   
-        
+        aowcinit_success = ktl.waitfor('($ao.WCSTAT == normal)', timeout=3)
+        if not aowcinit_success:
+            print(f'Failed to init WFC')
+        return aowcinit_success        
