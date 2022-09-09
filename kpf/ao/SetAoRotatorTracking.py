@@ -3,7 +3,7 @@ import ktl
 from ddoitranslatormodule.KPFTranslatorFunction import KPFTranslatorFunction
 
 
-class SetAoRotatorManual(KPFTranslatorFunction):
+class SetAoRotatorTracking(KPFTranslatorFunction):
     """
     SetAoRotatorManual -- set AO to Manual mode
     SYNOPSIS
@@ -24,13 +24,13 @@ class SetAoRotatorManual(KPFTranslatorFunction):
     @classmethod
     def perform(cls, args, logger, cfg):
         ao = ktl.cache('ao')
-        ao['OBRTDSRC'].write('0')
+        ao['OBRTDSRC'].write('1')
         ao['OBRTMOVE'].write('1')
 
     @classmethod
     def post_condition(cls, args, logger, cfg):
         ao = ktl.cache('ao')
-        obrtdsrc_success = ktl.waitfor('($ao.OBRTDSRC == manual)', timeout=3)
+        obrtdsrc_success = ktl.waitfor('($ao.OBRTDSRC == tracking)', timeout=3)
         if not obrtdsrc_success:
-            print(f'Failed to set the rotator to Manual')
+            print(f'Failed to set the rotator to Tracking')
         return obrtdsrc_success  

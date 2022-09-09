@@ -3,11 +3,11 @@ import ktl
 from ddoitranslatormodule.KPFTranslatorFunction import KPFTranslatorFunction
 
 
-class SetAoRotatorManual(KPFTranslatorFunction):
+class SetAfmMirror(KPFTranslatorFunction):
     """
-    SetAoRotatorManual -- set AO to Manual mode
+    SetAfmMirror -- set AFM to Mirror so ACAM sees light
     SYNOPSIS
-        SetAoRotatorManual.execute()
+        SetAfmMirror.execute()
     DESCRIPTION
         AO rotator needs to be in the Manual mode before observing.
 
@@ -24,13 +24,13 @@ class SetAoRotatorManual(KPFTranslatorFunction):
     @classmethod
     def perform(cls, args, logger, cfg):
         ao = ktl.cache('ao')
-        ao['OBRTDSRC'].write('0')
-        ao['OBRTMOVE'].write('1')
+        ao['OBAMNAME'].write('Mirror')
+        ao['OBAMSLEW'].write('1')
 
     @classmethod
     def post_condition(cls, args, logger, cfg):
         ao = ktl.cache('ao')
-        obrtdsrc_success = ktl.waitfor('($ao.OBRTDSRC == manual)', timeout=3)
-        if not obrtdsrc_success:
-            print(f'Failed to set the rotator to Manual')
-        return obrtdsrc_success  
+        aoamstst_success = ktl.waitfor('($ao.OBAMSTST == INPOS)' and '($ao.OBAMNAME == Mirror)', timeout=60)
+        if not aoamstst_success:
+            print(f'Failed to set AFM to Mirror')
+        return aoamstst_success   

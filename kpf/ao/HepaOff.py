@@ -31,4 +31,7 @@ class HepaOff(KPFTranslatorFunction):
     @classmethod
     def post_condition(cls, args, logger, cfg):
         ao = ktl.cache('ao')
-        return ktl.waitfor('($ao.OBHPASTA == off)', timeout=3)
+        obhpasta_success = ktl.waitfor('($ao.OBHPASTA == off)', timeout=3)
+        if not obhpasta_success:
+            print(f'Failed to turn off HEPA')
+        return obhpasta_success   
